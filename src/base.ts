@@ -1,8 +1,8 @@
 import { Command } from '@oclif/core';
-import { Recorder, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
+import { Recorder, NewRelicSink } from '@smoya/asyncapi-adoption-metrics';
 
 export default abstract class extends Command {
-  recorder = new Recorder('asyncapi-adoption', new StdOutSink());
+  recorder = new Recorder('asyncapi_adoption', new NewRelicSink('API key'));
 
   async catch(err: Error & { exitCode?: number; }): Promise<any> {
     try {
