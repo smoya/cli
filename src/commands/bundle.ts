@@ -31,6 +31,16 @@ export default class Bundle extends Command {
   parser = new Parser();
 
   async run() {
+    try {
+      // Metrics recording when command is invoked
+      await this.recorder.recordActionInvoked('bundle');
+      await this.recorder.flush();
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+      }
+    }
+
     const { argv, flags } = await this.parse(Bundle);
     const output = flags.output;
     let baseFile;
@@ -87,7 +97,7 @@ export default class Bundle extends Command {
         const metadata = MetadataFromDocument(document);
         metadata['success'] = true;
         metadata['files'] = AsyncAPIFiles.length;
-        await this.recorder.recordActionExecution('bundle', metadata);
+        await this.recorder.recordActionExecuted('bundle', metadata);
         await this.recorder.flush();
       }
     } catch (e: any) {

@@ -32,6 +32,16 @@ export default class Convert extends Command {
   parser = new Parser();
 
   async run() {
+    try {
+      // Metrics recording when command is invoked
+      await this.recorder.recordActionInvoked('convert');
+      await this.recorder.flush();
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+      }
+    }
+
     const { args, flags } = await this.parse(Convert);
     const filePath = args['spec-file'];
     let specFile;
@@ -83,7 +93,7 @@ export default class Convert extends Command {
         metadata['from_version'] = document.version();
         metadata['to_version'] = flags['target-version'];
         console.log(metadata);
-        await this.recorder.recordActionExecution('convert', metadata);
+        await this.recorder.recordActionExecuted('convert', metadata);
         await this.recorder.flush();
       }
     } catch (e: any) {

@@ -50,6 +50,16 @@ export default class Optimize extends Command {
   parser = new Parser();
 
   async run() {
+    try {
+      // Metrics recording when command is invoked
+      await this.recorder.recordActionInvoked('optimize');
+      await this.recorder.flush();
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+      }
+    }
+
     const { args, flags } = await this.parse(Optimize); //NOSONAR
     const filePath = args['spec-file'];
     let specFile: Specification;
@@ -137,7 +147,7 @@ export default class Optimize extends Command {
         const metadata = MetadataFromDocument(document);
         metadata['success'] = true;
         metadata['optimizations'] = this.optimizations;
-        await this.recorder.recordActionExecution('optimize', metadata);
+        await this.recorder.recordActionExecuted('optimize', metadata);
         await this.recorder.flush();
       }
     } catch (e: any) {
