@@ -112,6 +112,16 @@ export default class Template extends Command {
   parser = new Parser();
 
   async run() {
+    try {
+      // Metrics recording when command is invoked
+      await this.recorder.recordActionInvoked('fromTemplate');
+      await this.recorder.flush();
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+      }
+    }
+    
     const { args, flags } = await this.parse(Template); // NOSONAR
 
     const asyncapi = args['asyncapi'];
