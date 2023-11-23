@@ -24,15 +24,8 @@ export default class Validate extends Command {
   parser = new Parser();
 
   async run() {
-    try {
-      // Metrics recording when command is invoked
-      await this.recorder.recordActionInvoked('validate');
-      await this.recorder.flush();
-    } catch (e: any) {
-      if (e instanceof Error) {
-        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
-      }
-    }
+    // Metrics recording when command is invoked
+    await this.recordActionInvoked('validate');
 
     const { args, flags } = await this.parse(Validate); //NOSONAR
     const filePath = args['spec-file'];
