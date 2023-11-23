@@ -1,10 +1,10 @@
 {
   "name": "@asyncapi/cli",
   "description": "All in one CLI for all AsyncAPI tools",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "@asyncapi",
   "bin": {
-    "asyncapi": "./bin/run"
+    "asyncapi": "./bin/run_bin"
   },
   "bugs": "https://github.com/asyncapi/cli/issues",
   "dependencies": {
