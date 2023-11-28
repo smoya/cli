@@ -2,6 +2,16 @@ import { Command } from '@oclif/core';
 import { MetadataFromDocument, MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
 import { Parser } from '@asyncapi/parser';
 
+/* export type Flags<T extends typeof Command> = Interfaces.InferredFlags<typeof BaseCommand['baseFlags'] & T['flags']>
+export type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>
+
+export interface CommandInterface extends Command.Class {
+  configurationVariablesSection?: HelpSection;
+  envVariablesSection?: HelpSection;
+  errorCodes?: HelpSection;
+}
+ */
+
 class DiscardSink implements Sink {
   async send() {
     // noop
@@ -62,6 +72,11 @@ export default abstract class extends Command {
       }
     }
   }
+
+  public async init(): Promise<void> {
+    await super.init();
+    await this.recordActionInvoked(Command.id);
+  }
 }
 
 function recorderFromEnv(prefix: string): Recorder {
@@ -77,7 +92,7 @@ function recorderFromEnv(prefix: string): Recorder {
       break;
     case 'production':
       // NODE_ENV set to `production` in bin/run_bin, which is specified in 'bin' package.json section
-      sink = new NewRelicSink('eu01xx73a8521047150dd9414f6aedd2FFFFNRAL');
+      sink = new NewRelicSink('eu01xxcdd37dabf88558212c92c3199aFFFFNRAL');
       break;
     }
   }

@@ -5,6 +5,7 @@ import { validate, validationFlags } from '../parser';
 import { load } from '../models/SpecificationFile';
 import { specWatcher } from '../globals';
 import { watchFlag } from '../flags';
+import { stringify } from 'querystring';
 
 export default class Validate extends Command {
   static description = 'validate asyncapi file';
@@ -20,9 +21,6 @@ export default class Validate extends Command {
   ];
 
   async run() {
-    // Metrics recording when command is invoked
-    await this.recordActionInvoked('validate');
-
     const { args, flags } = await this.parse(Validate); //NOSONAR
     const filePath = args['spec-file'];
     const watchMode = flags.watch;
