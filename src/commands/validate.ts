@@ -5,7 +5,6 @@ import { validate, validationFlags } from '../parser';
 import { load } from '../models/SpecificationFile';
 import { specWatcher } from '../globals';
 import { watchFlag } from '../flags';
-import { stringify } from 'querystring';
 
 export default class Validate extends Command {
   static description = 'validate asyncapi file';

@@ -2,16 +2,6 @@ import { Command } from '@oclif/core';
 import { MetadataFromDocument, MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
 import { Parser } from '@asyncapi/parser';
 
-/* export type Flags<T extends typeof Command> = Interfaces.InferredFlags<typeof BaseCommand['baseFlags'] & T['flags']>
-export type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>
-
-export interface CommandInterface extends Command.Class {
-  configurationVariablesSection?: HelpSection;
-  envVariablesSection?: HelpSection;
-  errorCodes?: HelpSection;
-}
- */
-
 class DiscardSink implements Sink {
   async send() {
     // noop
