@@ -63,9 +63,10 @@ export default abstract class extends Command {
     }
   }
 
-  public async init(): Promise<void> {
+  async init(): Promise<void> {
     await super.init();
-    await this.recordActionInvoked(Command.id);
+    const commandName : string = this.id || '';
+    await this.recordActionInvoked(commandName);
   }
 }
 
