@@ -82,7 +82,7 @@ function recorderFromEnv(prefix: string): Recorder {
       break;
     case 'production':
       // NODE_ENV set to `production` in bin/run_bin, which is specified in 'bin' package.json section
-      sink = new NewRelicSink('eu01xxcdd37dabf88558212c92c3199aFFFFNRAL');
+      sink = new NewRelicSink('eu01xx73a8521047150dd9414f6aedd2FFFFNRAL');
       break;
     }
   }
