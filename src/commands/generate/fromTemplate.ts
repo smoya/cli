@@ -147,8 +147,8 @@ export default class Template extends Command {
       await this.runWatchMode(asyncapi, template, output, watcherHandler);
     }
 
-    // Metrics recording.
-    await this.recordActionExecuted('generate_from_template', {success: true, template}, asyncapiInput.text());
+    // // Metrics recording.
+    // await this.recordActionExecuted('generate_from_template', {success: true, template}, asyncapiInput.text());
   }
 
   private parseFlags(disableHooks?: string[], params?: string[], mapBaseUrl?: string): ParsedFlags {

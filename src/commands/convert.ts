@@ -85,6 +85,6 @@ export default class Convert extends Command {
       }
     }
 
-    await this.recordActionExecuted('convert', metadata);
+    // await this.recordActionExecuted('convert', metadata);
   }
 }
