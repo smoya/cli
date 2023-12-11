@@ -1,8 +1,6 @@
 import { Command } from '@oclif/core';
 import { MetadataFromDocument, MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
 import { Parser } from '@asyncapi/parser';
-import validate from '@asyncapi/parser';
-import template from 'lodash.template';
 
 class DiscardSink implements Sink {
   async send() {
@@ -31,28 +29,6 @@ export default abstract class extends Command {
         const {document} = await this.parser.parse(rawDocument);
         if (document !== undefined) {
           metadata = MetadataFromDocument(document, metadata);
-          const commandName : string = this.id || '';
-          switch (commandName) {
-          case 'validate':
-            metadata['success'] = true;
-            metadata['validation_result'] = await validate(this, specFile, flags);
-            break;
-          case 'convert':
-            metadata['from_version'] = document.version();
-            break;
-          case 'bundle':
-            metadata['success'] = true;
-            metadata['files'] = AsyncAPIFiles.length;
-            break;
-          case 'template':
-            metadata['success'] = true;
-            metadata['template'] = template;
-            break;
-          case 'optimize':
-            metadata['success'] = true;
-            metadata['optimizations'] = this.optimizations;
-            break;
-          }
         }
       } catch (e: any) {
         if (e instanceof Error) {

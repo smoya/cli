@@ -80,8 +80,8 @@ export default class Bundle extends Command {
 
     const result = await load(output);
 
-    // // Metrics recording.
-    // await this.recordActionExecuted(result.text(), {success: true, files: AsyncAPIFiles.length});
+    // Metrics recording.
+    await this.recordActionExecuted(result.text(), {success: true, files: AsyncAPIFiles.length});
   }
 
   async loadFiles(filepaths: string[]): Promise<Specification[]> {

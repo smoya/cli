@@ -129,8 +129,8 @@ export default class Optimize extends Command {
       });
     }
 
-    // // Metrics recording.
-    // await this.recordActionExecuted('optimize', {success: true, optimizations: this.optimizations}, specFile.text());
+    // Metrics recording.
+    await this.recordActionExecuted('optimize', {success: true, optimizations: this.optimizations}, specFile.text());
   }
 
   private showOptimizations(elements: ReportElement[] | undefined) {
