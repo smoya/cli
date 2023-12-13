@@ -84,6 +84,7 @@ function recorderFromEnv(prefix: string): Recorder {
     case 'production':
       // NODE_ENV set to `production` in bin/run_bin, which is specified in 'bin' package.json section
       sink = new NewRelicSink('eu01xx73a8521047150dd9414f6aedd2FFFFNRAL');
+      console.log('IMPORTANT MESSAGE: We are tracking metrics anonymously from the commands you are executing just for statistical purposes.');
       break;
     }
   }
