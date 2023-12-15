@@ -84,7 +84,7 @@ function recorderFromEnv(prefix: string): Recorder {
     case 'production':
       // NODE_ENV set to `production` in bin/run_bin, which is specified in 'bin' package.json section
       sink = new NewRelicSink('eu01xx73a8521047150dd9414f6aedd2FFFFNRAL');
-      console.log('IMPORTANT MESSAGE: We are tracking metrics anonymously from the commands you are executing just for statistical purposes.');
+      console.log('AsyncAPI anonymously tracks command executions to improve the specification and tools, ensuring no sensitive data reaches our servers.\nIt aids in comprehending how AsyncAPI tools are used and adopted, facilitating ongoing improvements to our specifications and tools.\n\nTo disable tracking, set the "ASYNCAPI_METRICS" env variable to "false" when executing the command. For instance:\n\nASYNCAPI_METRICS=false asyncapi validate spec_file.yaml');
       break;
     }
   }
