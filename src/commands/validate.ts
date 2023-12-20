@@ -29,9 +29,8 @@ export default class Validate extends Command {
       specWatcher({ spec: specFile, handler: this, handlerName: 'validate' });
     }
 
-    const result = await validate(this, specFile, flags);
-
     // Metrics recording.
-    await this.recordActionExecuted('validate', {success: true, validation_result: result}, specFile.text());
+    const result = await validate(this, specFile, flags);
+    this.metricsMetadata = {success: true, validation_result: result};
   }
 }

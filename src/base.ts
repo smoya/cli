@@ -1,6 +1,7 @@
 import { Command } from '@oclif/core';
 import { MetadataFromDocument, MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
 import { Parser } from '@asyncapi/parser';
+import { Specification } from 'models/SpecificationFile';
 
 class DiscardSink implements Sink {
   async send() {
@@ -11,6 +12,14 @@ class DiscardSink implements Sink {
 export default abstract class extends Command {
   recorder = this.recorderFromEnv('asyncapi_adoption');
   parser = new Parser();
+  metricsMetadata: MetricMetadata = {};
+  specFile: Specification | undefined;
+
+  async init(): Promise<void> {
+    await super.init();
+    const commandName : string = this.id || '';
+    await this.recordActionInvoked(commandName);
+  }
 
   async catch(err: Error & { exitCode?: number; }): Promise<any> {
     try {
@@ -28,7 +37,7 @@ export default abstract class extends Command {
       try {
         const {document} = await this.parser.parse(rawDocument);
         if (document !== undefined) {
-          metadata = MetadataFromDocument(document, metadata);
+          this.metricsMetadata = MetadataFromDocument(document, metadata);
         }
       } catch (e: any) {
         if (e instanceof Error) {
@@ -63,10 +72,10 @@ export default abstract class extends Command {
     }
   }
 
-  async init(): Promise<void> {
-    await super.init();
-    const commandName : string = this.id || '';
-    await this.recordActionInvoked(commandName);
+  async finally(error: Error | undefined): Promise<any> {
+    await super.finally(error);
+    this.metricsMetadata['success'] = error === undefined;
+    await this.recordActionExecuted(this.id as string, this.metricsMetadata, this.specFile?.text());
   }
 
   recorderFromEnv(prefix: string): Recorder {
