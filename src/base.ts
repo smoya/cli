@@ -1,5 +1,5 @@
 import { Command } from '@oclif/core';
-import { MetadataFromDocument, MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
+import { MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
 import { Parser } from '@asyncapi/parser';
 import { Specification } from 'models/SpecificationFile';
 
