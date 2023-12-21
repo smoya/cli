@@ -1,10 +1,10 @@
 import { Flags } from '@oclif/core';
-
 import Command from '../base';
 import { validate, validationFlags } from '../parser';
 import { load } from '../models/SpecificationFile';
 import { specWatcher } from '../globals';
 import { watchFlag } from '../flags';
+import { MetadataFromDocument } from '@smoya/asyncapi-adoption-metrics';
 
 export default class Validate extends Command {
   static description = 'validate asyncapi file';
@@ -29,8 +29,19 @@ export default class Validate extends Command {
       specWatcher({ spec: specFile, handler: this, handlerName: 'validate' });
     }
 
-    // Metrics recording.
     const result = await validate(this, specFile, flags);
+
+    // Metrics recording.
     this.metricsMetadata = {success: true, validation_result: result};
+    try {
+      const {document} = await this.parser.parse(specFile.text());
+      if (document !== undefined) {
+        this.metricsMetadata = MetadataFromDocument(document, this.metricsMetadata);
+      }
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+      }
+    }
   }
 }

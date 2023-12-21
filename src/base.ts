@@ -32,20 +32,7 @@ export default abstract class extends Command {
     }
   }
 
-  async recordActionExecuted(action: string, metadata: MetricMetadata = {}, rawDocument?: string) {
-    if (rawDocument !== undefined) {
-      try {
-        const {document} = await this.parser.parse(rawDocument);
-        if (document !== undefined) {
-          this.metricsMetadata = MetadataFromDocument(document, metadata);
-        }
-      } catch (e: any) {
-        if (e instanceof Error) {
-          this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
-        }
-      }
-    }
-
+  async recordActionExecuted(action: string, metadata: MetricMetadata = {}) {
     const callable = async function(recorder: Recorder) {
       await recorder.recordActionExecuted(action, metadata);
     };
@@ -72,12 +59,6 @@ export default abstract class extends Command {
     }
   }
 
-  async finally(error: Error | undefined): Promise<any> {
-    await super.finally(error);
-    this.metricsMetadata['success'] = error === undefined;
-    await this.recordActionExecuted(this.id as string, this.metricsMetadata, this.specFile?.text());
-  }
-
   recorderFromEnv(prefix: string): Recorder {
     let sink: Sink = new DiscardSink();
     if (process.env.ASYNCAPI_METRICS !== 'false') {
@@ -98,6 +79,12 @@ export default abstract class extends Command {
     }
   
     return new Recorder(prefix, sink);
+  }
+
+  async finally(error: Error | undefined): Promise<any> {
+    await super.finally(error);
+    this.metricsMetadata['success'] = error === undefined;
+    await this.recordActionExecuted(this.id as string, this.metricsMetadata);
   }
 }
 

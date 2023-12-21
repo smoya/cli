@@ -6,7 +6,7 @@ import { ValidationError } from '../errors/validation-error';
 import { load } from '../models/SpecificationFile';
 import { SpecificationFileNotFound } from '../errors/specification-file';
 import { convert } from '@asyncapi/converter';
-import { MetadataFromDocument, MetricMetadata } from '@smoya/asyncapi-adoption-metrics';
+import { MetadataFromDocument } from '@smoya/asyncapi-adoption-metrics';
 
 import type { ConvertVersion } from '@asyncapi/converter';
 
@@ -72,19 +72,17 @@ export default class Convert extends Command {
     }
 
     // Metrics recording.
-    let metadata: MetricMetadata = {success: true, to_version: flags['target-version']};
+    this.metricsMetadata = {success: true, to_version: flags['target-version']};
     try {
       const {document} = await this.parser.parse(specFile.text());
       if (document !== undefined) {
-        metadata = MetadataFromDocument(document, metadata);
-        metadata['from_version'] = document.version();
+        this.metricsMetadata = MetadataFromDocument(document, this.metricsMetadata);
+        this.metricsMetadata['from_version'] = document.version();
       }
     } catch (e: any) {
       if (e instanceof Error) {
         this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
       }
     }
-
-    await this.recordActionExecuted('convert', metadata);
   }
 }

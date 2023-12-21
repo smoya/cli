@@ -8,13 +8,14 @@ import chalk from 'chalk';
 import { promises } from 'fs';
 import { Example } from '@oclif/core/lib/interfaces';
 import { Parser } from '@asyncapi/parser';
+import { MetadataFromDocument } from '@smoya/asyncapi-adoption-metrics';
 
 const { writeFile } = promises;
 
 export enum Optimizations {
   REMOVE_COMPONENTS='remove-components',
   REUSE_COMPONENTS='reuse-components',
-  MOVE_TO_COMPONETS='move-to-components'
+  MOVE_TO_COMPONENTS='move-to-components'
 }
 
 export enum Outputs {
@@ -96,7 +97,7 @@ export default class Optimize extends Command {
 
     try {
       const optimizedDocument = optimizer.getOptimizedDocument({rules: {
-        moveToComponents: this.optimizations.includes(Optimizations.MOVE_TO_COMPONETS),
+        moveToComponents: this.optimizations.includes(Optimizations.MOVE_TO_COMPONENTS),
         removeComponents: this.optimizations.includes(Optimizations.REMOVE_COMPONENTS),
         reuseComponents: this.optimizations.includes(Optimizations.REUSE_COMPONENTS)
       }, output: Output.YAML});
@@ -129,7 +130,17 @@ export default class Optimize extends Command {
     }
 
     // Metrics recording.
-    await this.recordActionExecuted('optimize', {success: true, optimizations: this.optimizations}, specFile.text());
+    this.metricsMetadata = {success: true, optimizations: this.optimizations};
+    try {
+      const {document} = await this.parser.parse(specFile.text());
+      if (document !== undefined) {
+        this.metricsMetadata = MetadataFromDocument(document, this.metricsMetadata);
+      }
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+      }
+    }
   }
 
   private showOptimizations(elements: ReportElement[] | undefined) {
@@ -159,7 +170,7 @@ export default class Optimize extends Command {
       const totalMove = report.moveToComponents?.filter((e: ReportElement) => e.action === 'move').length;
       this.log(`\n${chalk.green(totalMove)} components can be moved to the components sections.\nthe following changes will be made:`);
       this.showOptimizations(report.moveToComponents);
-      choices.push({name: 'move to components section', value: Optimizations.MOVE_TO_COMPONETS});
+      choices.push({name: 'move to components section', value: Optimizations.MOVE_TO_COMPONENTS});
     }
     if (canRemove) {
       const totalMove = report.removeComponents?.length;
