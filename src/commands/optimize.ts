@@ -129,7 +129,7 @@ export default class Optimize extends Command {
     }
 
     // Metrics recording.
-    this.specFile = await load(filePath);
+    this.specFile = specFile;
     this.metricsMetadata = {optimizations: this.optimizations};
   }
 

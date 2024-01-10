@@ -78,7 +78,7 @@ export default class Convert extends Command {
       if (document !== undefined) {
         metadata = MetadataFromDocument(document, metadata);
         metadata['from_version'] = document.version();
-        this.specFile = await load(filePath);
+        this.specFile = specFile;
         this.metricsMetadata = metadata;
       }
     } catch (e: any) {

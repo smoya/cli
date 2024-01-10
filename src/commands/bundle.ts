@@ -78,8 +78,14 @@ export default class Bundle extends Command {
     }
 
     // Metrics recording.
-    this.specFile = await load(output);
-    this.metricsMetadata = {files: AsyncAPIFiles.length};
+    try {
+      this.specFile = await load(output);
+      this.metricsMetadata = {files: AsyncAPIFiles.length};
+    } catch (e: any) {
+      if (e instanceof Error) {
+        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+      }
+    }
   }
 
   async loadFiles(filepaths: string[]): Promise<Specification[]> {
