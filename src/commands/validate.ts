@@ -32,6 +32,6 @@ export default class Validate extends Command {
 
     // Metrics recording.
     this.specFile = await load(filePath);
-    this.metricsMetadata = {success: true, validation_result: result};
+    this.metricsMetadata = {validation_result: result};
   }
 }

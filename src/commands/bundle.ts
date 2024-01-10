@@ -79,7 +79,7 @@ export default class Bundle extends Command {
 
     // Metrics recording.
     this.specFile = await load(output);
-    this.metricsMetadata = {success: true, files: AsyncAPIFiles.length};
+    this.metricsMetadata = {files: AsyncAPIFiles.length};
   }
 
   async loadFiles(filepaths: string[]): Promise<Specification[]> {

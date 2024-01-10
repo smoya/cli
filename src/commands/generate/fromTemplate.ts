@@ -147,7 +147,7 @@ export default class Template extends Command {
 
     // Metrics recording.
     this.specFile = asyncapiInput;
-    this.metricsMetadata = {success: true, template};
+    this.metricsMetadata = {template};
   }
 
   private parseFlags(disableHooks?: string[], params?: string[], mapBaseUrl?: string): ParsedFlags {

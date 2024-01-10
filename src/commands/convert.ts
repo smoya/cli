@@ -72,7 +72,7 @@ export default class Convert extends Command {
     }
 
     // Metrics recording.
-    let metadata: MetricMetadata = {success: true, to_version: flags['target-version']};
+    let metadata: MetricMetadata = {to_version: flags['target-version']};
     try {
       const {document} = await this.parser.parse(specFile.text());
       if (document !== undefined) {
