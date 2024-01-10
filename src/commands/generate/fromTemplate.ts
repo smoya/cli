@@ -12,8 +12,6 @@ import { isLocalTemplate, Watcher } from '../../utils/generator';
 import { ValidationError } from '../../errors/validation-error';
 import { GeneratorError } from '../../errors/generator-error';
 import { Parser } from '@asyncapi/parser';
-import { MetadataFromDocument } from '@smoya/asyncapi-adoption-metrics';
-
 import type { Example } from '@oclif/core/lib/interfaces';
 
 const red = (text: string) => `\x1b[31m${text}\x1b[0m`;
@@ -148,17 +146,7 @@ export default class Template extends Command {
     }
 
     // Metrics recording.
-    this.metricsMetadata = {success: true, template};
-    try {
-      const {document} = await this.parser.parse(asyncapiInput.text());
-      if (document !== undefined) {
-        this.metricsMetadata = MetadataFromDocument(document, this.metricsMetadata);
-      }
-    } catch (e: any) {
-      if (e instanceof Error) {
-        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
-      }
-    }
+    await this.recordActionExecuted('generate_from_template', {success: true, template}, asyncapiInput.text());
   }
 
   private parseFlags(disableHooks?: string[], params?: string[], mapBaseUrl?: string): ParsedFlags {

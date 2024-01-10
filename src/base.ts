@@ -1,5 +1,5 @@
 import { Command } from '@oclif/core';
-import { MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
+import { MetadataFromDocument, MetricMetadata, NewRelicSink, Recorder, Sink, StdOutSink } from '@smoya/asyncapi-adoption-metrics';
 import { Parser } from '@asyncapi/parser';
 import { Specification } from 'models/SpecificationFile';
 
@@ -32,7 +32,20 @@ export default abstract class extends Command {
     }
   }
 
-  async recordActionExecuted(action: string, metadata: MetricMetadata = {}) {
+  async recordActionExecuted(action: string, metadata: MetricMetadata = {}, rawDocument?: string) {
+    if (rawDocument !== undefined) {
+      try {
+        const {document} = await this.parser.parse(rawDocument);
+        if (document !== undefined) {
+          metadata = MetadataFromDocument(document, metadata);
+        }
+      } catch (e: any) {
+        if (e instanceof Error) {
+          this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
+        }
+      }
+    }
+    
     const callable = async function(recorder: Recorder) {
       await recorder.recordActionExecuted(action, metadata);
     };
@@ -59,6 +72,12 @@ export default abstract class extends Command {
     }
   }
 
+  async finally(error: Error | undefined): Promise<any> {
+    await super.finally(error);
+    this.metricsMetadata['success'] = error === undefined;
+    await this.recordActionExecuted(this.id as string, this.metricsMetadata, this.specFile?.text());
+  }
+
   recorderFromEnv(prefix: string): Recorder {
     let sink: Sink = new DiscardSink();
     if (process.env.ASYNCAPI_METRICS !== 'false') {
@@ -79,12 +98,6 @@ export default abstract class extends Command {
     }
   
     return new Recorder(prefix, sink);
-  }
-
-  async finally(error: Error | undefined): Promise<any> {
-    await super.finally(error);
-    this.metricsMetadata['success'] = error === undefined;
-    await this.recordActionExecuted(this.id as string, this.metricsMetadata);
   }
 }
 

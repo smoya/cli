@@ -8,7 +8,6 @@ import chalk from 'chalk';
 import { promises } from 'fs';
 import { Example } from '@oclif/core/lib/interfaces';
 import { Parser } from '@asyncapi/parser';
-import { MetadataFromDocument } from '@smoya/asyncapi-adoption-metrics';
 
 const { writeFile } = promises;
 
@@ -130,17 +129,7 @@ export default class Optimize extends Command {
     }
 
     // Metrics recording.
-    this.metricsMetadata = {success: true, optimizations: this.optimizations};
-    try {
-      const {document} = await this.parser.parse(specFile.text());
-      if (document !== undefined) {
-        this.metricsMetadata = MetadataFromDocument(document, this.metricsMetadata);
-      }
-    } catch (e: any) {
-      if (e instanceof Error) {
-        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
-      }
-    }
+    await this.recordActionExecuted('optimize', {success: true, optimizations: this.optimizations}, specFile.text());
   }
 
   private showOptimizations(elements: ReportElement[] | undefined) {

@@ -6,7 +6,6 @@ import { promises } from 'fs';
 import path from 'path';
 import { Specification, load } from '../models/SpecificationFile';
 import { Parser } from '@asyncapi/parser';
-import { MetadataFromDocument } from '@smoya/asyncapi-adoption-metrics';
 
 const { writeFile } = promises;
 
@@ -81,17 +80,7 @@ export default class Bundle extends Command {
     const result = await load(output);
 
     // Metrics recording.
-    this.metricsMetadata = {success: true, files: AsyncAPIFiles.length};
-    try {
-      const {document} = await this.parser.parse(result.text());
-      if (document !== undefined) {
-        this.metricsMetadata = MetadataFromDocument(document, this.metricsMetadata);
-      }
-    } catch (e: any) {
-      if (e instanceof Error) {
-        this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
-      }
-    }
+    await this.recordActionExecuted('bundle', {success: true, files: AsyncAPIFiles.length}, result.text());
   }
 
   async loadFiles(filepaths: string[]): Promise<Specification[]> {
