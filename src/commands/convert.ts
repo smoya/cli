@@ -78,13 +78,13 @@ export default class Convert extends Command {
       if (document !== undefined) {
         metadata = MetadataFromDocument(document, metadata);
         metadata['from_version'] = document.version();
+        this.specFile = await load(filePath);
+        this.metricsMetadata = metadata;
       }
     } catch (e: any) {
       if (e instanceof Error) {
         this.log(`Skipping submitting anonymous metrics due to the following error: ${e.name}: ${e.message}`);
       }
     }
-
-    await this.recordActionExecuted('convert', metadata);
   }
 }

@@ -77,10 +77,9 @@ export default class Bundle extends Command {
       this.log(`Check out your shiny new bundled files at ${output}`);
     }
 
-    const result = await load(output);
-
     // Metrics recording.
-    await this.recordActionExecuted('bundle', {success: true, files: AsyncAPIFiles.length}, result.text());
+    this.specFile = await load(output);
+    this.metricsMetadata = {success: true, files: AsyncAPIFiles.length};
   }
 
   async loadFiles(filepaths: string[]): Promise<Specification[]> {

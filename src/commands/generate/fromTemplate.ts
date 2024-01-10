@@ -146,7 +146,8 @@ export default class Template extends Command {
     }
 
     // Metrics recording.
-    await this.recordActionExecuted('generate_from_template', {success: true, template}, asyncapiInput.text());
+    this.specFile = asyncapiInput;
+    this.metricsMetadata = {success: true, template};
   }
 
   private parseFlags(disableHooks?: string[], params?: string[], mapBaseUrl?: string): ParsedFlags {
