@@ -126,6 +126,9 @@ export default class Template extends Command {
       disabledHooks: parsedFlags.disableHooks,
     };
     const asyncapiInput = (await load(asyncapi)) || (await load());
+    
+    this.specFile = asyncapiInput;
+    this.metricsMetadata.template = template;
 
     const watchTemplate = flags['watch'];
     const genOption: any = {};
@@ -144,10 +147,6 @@ export default class Template extends Command {
       const watcherHandler = this.watcherHandler(asyncapi, template, output, options, genOption);
       await this.runWatchMode(asyncapi, template, output, watcherHandler);
     }
-
-    // Metrics recording.
-    this.specFile = asyncapiInput;
-    this.metricsMetadata = {template};
   }
 
   private parseFlags(disableHooks?: string[], params?: string[], mapBaseUrl?: string): ParsedFlags {

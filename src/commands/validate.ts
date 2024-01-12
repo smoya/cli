@@ -23,15 +23,13 @@ export default class Validate extends Command {
     const filePath = args['spec-file'];
     const watchMode = flags.watch;
 
-    const specFile = await load(filePath);
+    this.specFile = await load(filePath);
     if (watchMode) {
-      specWatcher({ spec: specFile, handler: this, handlerName: 'validate' });
+      specWatcher({ spec: this.specFile, handler: this, handlerName: 'validate' });
     }
 
-    const result = await validate(this, specFile, flags);
+    const result = await validate(this, this.specFile, flags);
 
-    // Metrics recording.
-    this.specFile = specFile;
-    this.metricsMetadata = {validation_result: result};
+    this.metricsMetadata.validation_result = result;
   }
 }
