@@ -81,7 +81,7 @@ export default abstract class extends Command {
   recorderFromEnv(prefix: string): Recorder {
     let sink: Sink = new DiscardSink();
     
-    if (process.env.ASYNCAPI_METRICS !== 'false' && process.env.NODE_ENV !== 'CI') {
+    if (process.env.ASYNCAPI_METRICS !== 'false' && process.env.CI !== 'true') {
       switch (process.env.NODE_ENV) {
       case 'development':
         // NODE_ENV set to `development` in bin/run
